@@ -1,3 +1,5 @@
+from models import db
+
 class Material(db.Model):
     __tablename__ = "material"
 

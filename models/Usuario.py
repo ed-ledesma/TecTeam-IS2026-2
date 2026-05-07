@@ -1,3 +1,5 @@
+from models import db
+
 class Usuario(db.Model):
     __tablename__ = "usuario"
 

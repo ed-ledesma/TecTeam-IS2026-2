@@ -1,3 +1,5 @@
+from models import db
+
 class Inscripcion(db.Model):
     __tablename__ = "inscripcion"
 

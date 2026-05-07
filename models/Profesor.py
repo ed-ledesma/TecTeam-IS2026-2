@@ -1,3 +1,5 @@
+from models import db
+
 class Profesor(db.Model):
     __tablename__ = "profesor"
 
