@@ -1,5 +1,4 @@
 -- Tabla usuario
-DROP TABLE IF EXISTS usuario;
 CREATE TABLE usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombres VARCHAR(100) NOT NULL,
@@ -14,7 +13,6 @@ CREATE TABLE usuario (
 );
 
 -- Tabla profesor
-DROP TABLE IF EXISTS profesor;
 CREATE TABLE profesor (
     id_usuario INT PRIMARY KEY,
     numero_empleado VARCHAR(50) NOT NULL UNIQUE,
@@ -24,7 +22,6 @@ CREATE TABLE profesor (
 );
 
 -- Tabla administrador
-DROP TABLE IF EXISTS administrador;
 CREATE TABLE administrador (
     id_usuario INT PRIMARY KEY,
     nivel_acceso INT NOT NULL,
@@ -33,7 +30,6 @@ CREATE TABLE administrador (
 );
 
 -- Tabla alumno
-DROP TABLE IF EXISTS alumno;
 CREATE TABLE alumno (
     id_usuario INT PRIMARY KEY,
     matricula VARCHAR(50) NOT NULL UNIQUE,
@@ -41,14 +37,12 @@ CREATE TABLE alumno (
 );
 
 -- Tabla idioma
-DROP TABLE IF EXISTS idioma;
 CREATE TABLE idioma (
     id_idioma INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Tabla curso
-DROP TABLE IF EXISTS curso;
 CREATE TABLE curso (
     id_curso INT AUTO_INCREMENT PRIMARY KEY,
     id_profesor INT NOT NULL,
@@ -64,7 +58,6 @@ CREATE TABLE curso (
 );
 
 -- Tabla material
-DROP TABLE IF EXISTS material;
 CREATE TABLE material (
     id_material INT AUTO_INCREMENT PRIMARY KEY,
     id_curso INT NOT NULL,
@@ -77,7 +70,6 @@ CREATE TABLE material (
 );
 
 -- Tabla inscripcion
-DROP TABLE IF EXISTS inscripcion;
 CREATE TABLE inscripcion (
     id_alumno INT NOT NULL,
     id_curso INT NOT NULL,
@@ -89,7 +81,6 @@ CREATE TABLE inscripcion (
 );
 
 -- Tabla nivel alumno
-DROP TABLE IF EXISTS nivel_alumno;
 CREATE TABLE nivel_alumno (
     id_usuario INT NOT NULL,
     id_idioma INT NOT NULL,
