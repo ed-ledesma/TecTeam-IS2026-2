@@ -1,4 +1,5 @@
 from models import db
+from datetime import datetime
 
 class Inscripcion(db.Model):
     __tablename__ = "inscripcion"
