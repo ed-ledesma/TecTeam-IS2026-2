@@ -1,78 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Login</title>
+{% extends "base.html" %}
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+{% block title %}Iniciar sesión{% endblock %}
+{% block page_class %}centered{% endblock %}
 
-.container {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    width: 320px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    text-align: center;
-}
+{% block content %}
+<section class="card narrow">
+    <h1>Iniciar sesión</h1>
+    <p class="muted">Accede al Sistema de Gestión de Cursos de Idiomas.</p>
 
-h2 {
-    margin-bottom: 20px;
-}
+    <form action="/login" method="POST" class="grid" style="margin-top: 24px;">
+        <div>
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" name="correo" placeholder="correo@ejemplo.com" required>
+        </div>
 
-input, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    box-sizing: border-box;
-}
+        <div>
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" name="password" placeholder="Contraseña" required>
+        </div>
 
-button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    background: #667eea;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #5a67d8;
-}
-
-.footer {
-    margin-top: 15px;
-}
-
-a {
-    text-decoration: none;
-    color: #667eea;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-    <h2>Iniciar sesión</h2>
-
-    <form action="/" method="POST">
-        <input type="text" name="correo" placeholder="Correo" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-
-        <button type="submit">Ingresar</button>
+        <button class="button" type="submit">Ingresar</button>
     </form>
-
-</div>
-</body>
-</html>
+</section>
+{% endblock %}

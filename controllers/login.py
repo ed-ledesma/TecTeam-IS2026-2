@@ -1,59 +1,80 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for
-from models.Usuario import Usuario
-from models.Alumno import Alumno
-from models.Profesor import Profesor
-from models.Administrador import Administrador
-from models import db
+from datetime import datetime
+
+from flask import Blueprint, render_template, request, redirect, url_for
 from werkzeug.security import check_password_hash
 
-login_bp = Blueprint('login', __name__)
+from models import db
+from models.Usuario import Usuario
+from utils.auth import (
+    cerrar_sesion_actual,
+    encontrar_rol_de_usuario,
+    guardar_usuario_en_sesion,
+    hay_usuario_autenticado,
+    obtener_rol_usuario_autenticado,
+    redirigir_a_dashboard_por_rol,
+    sesion_requerida,
+)
 
-@login_bp.route('/', methods=['GET', 'POST'])
+login_bp = Blueprint("login", __name__)
+
+
+@login_bp.route("/", methods=["GET", "POST"])
+@login_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if 'user_id' in session:
-        return redirect(url_for('login.dashboard'))
+    if hay_usuario_autenticado():
+        return redirigir_a_dashboard_por_rol(obtener_rol_usuario_autenticado())
 
-    if request.method == 'POST':
-        correo = request.form.get('correo')
-        password = request.form.get('password')
+    if request.method == "POST":
+        correo = request.form.get("correo", "").strip().lower()
+        password = request.form.get("password", "")
 
-        usuario = db.session.query(Usuario).filter_by(
-            correo=correo
-        ).first()
+        usuario = Usuario.query.filter_by(correo=correo).first()
 
-        if usuario and check_password_hash(usuario.password_hash, password):
+        if usuario is None or not check_password_hash(usuario.password_hash, password):
+            return render_template(
+                "error.html",
+                titulo="Credenciales inválidas",
+                mensaje="El correo o la contraseña no son correctos.",
+                enlace=url_for("login.login"),
+                texto_enlace="Volver al login",
+            ), 401
 
-            # Guardar en sesión (cookie)
-            session['user_id'] = usuario.id_usuario
+        if not usuario.activo:
+            return render_template(
+                "error.html",
+                titulo="Usuario inactivo",
+                mensaje="Tu usuario está inactivo. Contacta al administrador del sistema.",
+                enlace=url_for("login.login"),
+                texto_enlace="Volver al login",
+            ), 403
 
-            # Detectar rol
-            if db.session.get(Administrador, usuario.id_usuario):
-                session['rol'] = 'administrador'
-            elif db.session.get(Profesor, usuario.id_usuario):
-                session['rol'] = 'profesor'
-            elif db.session.get(Alumno, usuario.id_usuario):
-                session['rol'] = 'alumno'
+        rol = encontrar_rol_de_usuario(usuario.id_usuario)
 
-            return redirect(url_for('login.dashboard'))
+        if rol is None:
+            return render_template(
+                "error.html",
+                titulo="Usuario sin rol",
+                mensaje="Tu usuario no tiene un rol asignado en el sistema.",
+                enlace=url_for("login.login"),
+                texto_enlace="Volver al login",
+            ), 403
 
-        return render_template('error.html')
+        usuario.ultimo_acceso = datetime.utcnow()
+        db.session.commit()
+        guardar_usuario_en_sesion(usuario, rol)
 
-    return render_template('login.html')
+        return redirigir_a_dashboard_por_rol(rol)
 
-@login_bp.route('/dashboard')
+    return render_template("login.html")
+
+
+@login_bp.route("/dashboard")
+@sesion_requerida
 def dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login.login'))
+    return redirigir_a_dashboard_por_rol(obtener_rol_usuario_autenticado())
 
-    if session['rol'] == 'administrador':
-        return render_template('admin.html')
-    elif session['rol'] == 'profesor':
-        return render_template('profesor.html')
-    elif session['rol'] == 'alumno':
-        return render_template('alumno.html')
 
-    return render_template('error.html')
-@login_bp.route('/logout')
+@login_bp.route("/logout")
 def logout():
-    session.clear()
-    return redirect(url_for('login.login'))
+    cerrar_sesion_actual()
+    return redirect(url_for("login.login"))

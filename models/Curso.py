@@ -37,7 +37,7 @@ class Curso(db.Model):
 
     cupo_maximo = db.Column(db.Integer)
 
-    estado_curso = db.Column(db.String(50))
+    estado_curso = db.Column(db.String(50), default="borrador", nullable=False)
 
     profesor = db.relationship("Profesor")
 

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SGCI{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f4f6f9;
+            --panel: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --primary: #667eea;
+            --primary-hover: #5a67d8;
+            --secondary: #374151;
+            --border: #e5e7eb;
+            --danger: #dc2626;
+            --success: #15803d;
+            --warning: #b45309;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        .topbar {
+            align-items: center;
+            background: #111827;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 28px;
+        }
+
+        .brand {
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav a {
+            border-radius: 8px;
+            color: white;
+            padding: 8px 10px;
+            text-decoration: none;
+        }
+
+        .nav a:hover {
+            background: #374151;
+        }
+
+        .page {
+            margin: 0 auto;
+            max-width: 1180px;
+            padding: 32px 24px;
+        }
+
+        .page.centered {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--panel);
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 28px;
+        }
+
+        .card.narrow {
+            width: min(520px, 100%);
+        }
+
+        .page-header {
+            align-items: flex-start;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .page-header h1, .card h1, .card h2 {
+            margin: 0 0 8px;
+        }
+
+        .page-header p, .muted {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .actions {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .button {
+            border: 0;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            line-height: 1;
+            padding: 11px 14px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: var(--primary-hover);
+        }
+
+        .button.secondary {
+            background: var(--secondary);
+        }
+
+        .button.danger {
+            background: var(--danger);
+        }
+
+        .button.light {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .button.small {
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        form.inline {
+            display: inline;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .form-section {
+            border-top: 1px solid var(--border);
+            margin-top: 22px;
+            padding-top: 22px;
+        }
+
+        label {
+            color: #374151;
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        input, select, textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 11px 12px;
+            width: 100%;
+        }
+
+        .messages {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .badge {
+            border-radius: 999px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 9px;
+            text-transform: uppercase;
+        }
+
+        .badge.success {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .badge.muted {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+
+        .section-spaced {
+            margin-top: 24px;
+        }
+
+        .section-spaced-small {
+            margin-top: 14px;
+        }
+
+        .page-header.compact {
+            margin-bottom: 14px;
+        }
+
+        .table-card.flat {
+            box-shadow: none;
+        }
+
+        .filters-card {
+            margin-bottom: 18px;
+            padding: 16px;
+        }
+
+        .compact-actions {
+            gap: 6px;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    {% block body %}
+    <div class="layout">
+        {% if session.get("user_id") %}
+        <header class="topbar">
+            <a class="brand" href="/dashboard">SGCI</a>
+            <nav class="nav">
+                {% if session.get("rol") == "administrador" %}
+                    <a href="/admin/dashboard">Panel</a>
+                    <a href="/admin/usuarios">Usuarios</a>
+                    <a href="/admin/profesores">Profesores</a>
+                    <a href="/admin/alumnos">Alumnos</a>
+                {% elif session.get("rol") == "profesor" %}
+                    <a href="/profesor/dashboard">Panel</a>
+                    <a href="/profesor/cursos">Mis cursos</a>
+                    <a href="/profesor/cursos/crear">Crear curso</a>
+                {% elif session.get("rol") == "alumno" %}
+                    <a href="/alumno/dashboard">Panel</a>
+                    <a href="/alumno/cursos">Mis cursos</a>
+                {% endif %}
+                <a href="/logout">Cerrar sesión</a>
+            </nav>
+        </header>
+        {% endif %}
+
+        <main class="page {% block page_class %}{% endblock %}">
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    <section class="messages">
+                        {% for categoria, mensaje in mensajes %}
+                            <div class="message {{ categoria }}">{{ mensaje }}</div>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% endblock %}
+</body>
+</html>

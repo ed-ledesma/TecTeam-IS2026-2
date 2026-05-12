@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}{% if modo == "crear" %}Crear usuario{% else %}Editar usuario{% endif %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{% if modo == "crear" %}Crear usuario{% else %}Editar usuario{% endif %}</h1>
+        <p>Registra los datos generales y la información correspondiente al rol.</p>
+    </div>
+    <div class="actions">
+        <a class="button light" href="/admin/usuarios">Volver</a>
+    </div>
+</section>
+
+<section class="card">
+    <form method="POST" class="grid">
+        <div class="form-grid">
+            <div>
+                <label for="nombres">Nombres</label>
+                <input id="nombres" name="nombres" value="{{ datos.nombres }}" required>
+            </div>
+            <div>
+                <label for="apellido_paterno">Apellido paterno</label>
+                <input id="apellido_paterno" name="apellido_paterno" value="{{ datos.apellido_paterno }}" required>
+            </div>
+            <div>
+                <label for="apellido_materno">Apellido materno</label>
+                <input id="apellido_materno" name="apellido_materno" value="{{ datos.apellido_materno }}" required>
+            </div>
+            <div>
+                <label for="correo">Correo</label>
+                <input id="correo" name="correo" type="email" value="{{ datos.correo }}" required>
+            </div>
+            <div>
+                <label for="fecha_nacimiento">Fecha de nacimiento</label>
+                <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" value="{{ datos.fecha_nacimiento }}" required>
+            </div>
+            <div>
+                <label for="password">
+                    {% if modo == "crear" %}Contraseña{% else %}Nueva contraseña{% endif %}
+                </label>
+                <input id="password" name="password" type="password" {% if modo == "crear" %}required{% endif %}>
+                {% if modo == "editar" %}<p class="muted">Déjala vacía para conservar la contraseña actual.</p>{% endif %}
+            </div>
+            <div>
+                <label for="rol">Rol</label>
+                <select id="rol" name="rol" required>
+                    {% for rol in roles %}
+                        <option value="{{ rol }}" {% if datos.rol == rol %}selected{% endif %}>{{ rol|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <section class="form-section" data-role-section="alumno">
+            <h2>Datos de alumno</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="matricula">Matrícula</label>
+                    <input id="matricula" name="matricula" value="{{ datos.matricula }}">
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section" data-role-section="profesor">
+            <h2>Datos de profesor</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="numero_empleado">Número de empleado</label>
+                    <input id="numero_empleado" name="numero_empleado" value="{{ datos.numero_empleado }}">
+                </div>
+                <div>
+                    <label for="especialidad">Especialidad</label>
+                    <input id="especialidad" name="especialidad" value="{{ datos.especialidad }}">
+                </div>
+                <div>
+                    <label for="fecha_contratacion">Fecha de contratación</label>
+                    <input id="fecha_contratacion" name="fecha_contratacion" type="date" value="{{ datos.fecha_contratacion }}">
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section" data-role-section="administrador">
+            <h2>Datos de administrador</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="nivel_acceso">Nivel de acceso</label>
+                    <input id="nivel_acceso" name="nivel_acceso" type="number" min="1" value="{{ datos.nivel_acceso }}">
+                </div>
+                <div>
+                    <label for="area_responsable">Área responsable</label>
+                    <input id="area_responsable" name="area_responsable" value="{{ datos.area_responsable }}">
+                </div>
+            </div>
+        </section>
+
+        <div class="actions" style="margin-top: 20px;">
+            <button class="button" type="submit">
+                {% if modo == "crear" %}Crear usuario{% else %}Guardar cambios{% endif %}
+            </button>
+            <a class="button light" href="/admin/usuarios">Cancelar</a>
+        </div>
+    </form>
+</section>
+
+<script>
+    const rol = document.getElementById("rol");
+    const secciones = document.querySelectorAll("[data-role-section]");
+
+    function mostrarSeccionActiva() {
+        secciones.forEach((seccion) => {
+            seccion.style.display = seccion.dataset.roleSection === rol.value ? "block" : "none";
+        });
+    }
+
+    rol.addEventListener("change", mostrarSeccionActiva);
+    mostrarSeccionActiva();
+</script>
+{% endblock %}

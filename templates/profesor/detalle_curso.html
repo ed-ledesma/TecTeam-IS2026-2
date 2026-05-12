@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ curso.nombre }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{{ curso.nombre }}</h1>
+        <p>{{ curso.codigo }} · {{ curso.idioma.nombre }}</p>
+    </div>
+    <div class="actions">
+        <a class="button light" href="/profesor/cursos">Volver</a>
+        <a class="button secondary" href="/profesor/cursos/{{ curso.id_curso }}/editar">Editar</a>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <strong>{{ curso.nivel_requerido }}</strong>
+        <span>Nivel requerido</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ curso.modalidad or 'Sin definir' }}</strong>
+        <span>Modalidad</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ curso.cupo_maximo or 'Sin límite' }}</strong>
+        <span>Cupo máximo</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ inscripciones_activas }}</strong>
+        <span>Inscripciones activas</span>
+    </article>
+</section>
+
+<section class="card section-spaced">
+    <h2>Estado del curso</h2>
+    <p>
+        <span class="badge {{ 'success' if curso.estado_curso == 'publicado' else 'warning' if curso.estado_curso == 'borrador' else 'muted' }}">
+            {{ curso.estado_curso }}
+        </span>
+    </p>
+
+    <div class="actions section-spaced-small">
+        {% if curso.estado_curso == 'borrador' %}
+            <form class="inline" method="post" action="/profesor/cursos/{{ curso.id_curso }}/publicar">
+                <button class="button" type="submit">Publicar curso</button>
+            </form>
+        {% endif %}
+
+        {% if curso.estado_curso != 'cerrado' %}
+            <form class="inline" method="post" action="/profesor/cursos/{{ curso.id_curso }}/cerrar">
+                <button class="button danger" type="submit">Cerrar curso</button>
+            </form>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
