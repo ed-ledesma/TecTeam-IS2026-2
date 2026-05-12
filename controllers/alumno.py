@@ -6,6 +6,7 @@ from models.Curso import Curso
 from models.Idioma import Idioma
 from models.Inscripcion import Inscripcion
 from models.NivelAlumno import NivelAlumno
+from models.Material import Material
 
 from utils.auth import (
     ROL_ALUMNO,
@@ -80,9 +81,15 @@ def detalle_curso(id_curso):
         estado_inscripcion="activa",
     ).first() is not None
 
+    materiales = Material.query.filter_by(
+        id_curso=curso.id_curso,
+        visible=True,
+    ).all()
+
     return render_template(
         "alumno/detalle_curso.html",
         curso=curso,
+        materiales=materiales,
         lugares_disponibles=lugares_disponibles,
         esta_inscrito=esta_inscrito,
     )
