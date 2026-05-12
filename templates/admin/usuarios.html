@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Usuarios</h1>
+        <p>Administra cuentas, roles y estado de acceso.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/admin/usuarios/crear">Crear usuario</a>
+    </div>
+</section>
+
+<section class="card" style="margin-bottom: 18px;">
+    <form method="GET" action="/admin/usuarios" class="actions">
+        <select name="rol" style="max-width: 240px;">
+            <option value="">Todos los roles</option>
+            {% for rol in roles %}
+                <option value="{{ rol }}" {% if rol_filtrado == rol %}selected{% endif %}>{{ rol|capitalize }}</option>
+            {% endfor %}
+        </select>
+        <button class="button small" type="submit">Filtrar</button>
+        <a class="button small light" href="/admin/usuarios">Limpiar</a>
+    </form>
+</section>
+
+<section class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Último acceso</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in usuarios %}
+                <tr>
+                    <td>
+                        <strong>{{ item.usuario.nombres }} {{ item.usuario.apellido_paterno }} {{ item.usuario.apellido_materno }}</strong><br>
+                        <span class="muted">ID {{ item.usuario.id_usuario }}</span>
+                    </td>
+                    <td>{{ item.usuario.correo }}</td>
+                    <td>
+                        {% if item.rol %}
+                            <span class="badge muted">{{ item.rol }}</span>
+                        {% else %}
+                            <span class="badge warning">Sin rol</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.usuario.activo %}
+                            <span class="badge success">Activo</span>
+                        {% else %}
+                            <span class="badge warning">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.usuario.ultimo_acceso %}
+                            {{ item.usuario.ultimo_acceso.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            <span class="muted">Sin acceso</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <a class="button small light" href="/admin/usuarios/{{ item.usuario.id_usuario }}/editar">Editar</a>
+                            {% if item.usuario.activo %}
+                                <form class="inline" method="POST" action="/admin/usuarios/{{ item.usuario.id_usuario }}/desactivar">
+                                    <button class="button small danger" type="submit">Desactivar</button>
+                                </form>
+                            {% else %}
+                                <form class="inline" method="POST" action="/admin/usuarios/{{ item.usuario.id_usuario }}/activar">
+                                    <button class="button small" type="submit">Activar</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">No hay usuarios para mostrar.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Panel profesor{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Panel de profesor</h1>
+        <p>Administra tus cursos de idiomas y controla su publicación.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/profesor/cursos/crear">Crear curso</a>
+        <a class="button light" href="/profesor/cursos">Ver mis cursos</a>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <strong>{{ resumen.total }}</strong>
+        <span>Cursos registrados</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.borradores }}</strong>
+        <span>Borradores</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.publicados }}</strong>
+        <span>Publicados</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.cerrados }}</strong>
+        <span>Cerrados</span>
+    </article>
+</section>
+
+<section class="card section-spaced">
+    <div class="page-header compact">
+        <div>
+            <h2>Cursos recientes</h2>
+            <p>Últimos cursos registrados en tu panel.</p>
+        </div>
+    </div>
+
+    {% if cursos_recientes %}
+        <div class="table-card flat">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Curso</th>
+                        <th>Idioma</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos_recientes %}
+                    <tr>
+                        <td>{{ curso.codigo }}</td>
+                        <td>{{ curso.nombre }}</td>
+                        <td>{{ curso.idioma.nombre }}</td>
+                        <td>
+                            <span class="badge {{ 'success' if curso.estado_curso == 'publicado' else 'warning' if curso.estado_curso == 'borrador' else 'muted' }}">
+                                {{ curso.estado_curso }}
+                            </span>
+                        </td>
+                        <td>
+                            <a class="button small light" href="/profesor/cursos/{{ curso.id_curso }}">Ver</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">Aún no tienes cursos registrados.</p>
+    {% endif %}
+</section>
+{% endblock %}

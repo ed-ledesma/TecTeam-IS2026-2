@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Panel administrador{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Panel de administrador</h1>
+        <p>Gestiona usuarios, profesores, alumnos y consulta el avance académico del sistema.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/admin/usuarios/crear">Crear usuario</a>
+        <a class="button light" href="/admin/usuarios">Ver usuarios</a>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <strong>{{ resumen.usuarios }}</strong>
+        <span>Usuarios registrados</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.usuarios_activos }}</strong>
+        <span>Usuarios activos</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.profesores }}</strong>
+        <span>Profesores</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.alumnos }}</strong>
+        <span>Alumnos</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.cursos }}</strong>
+        <span>Cursos</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ resumen.inscripciones }}</strong>
+        <span>Inscripciones</span>
+    </article>
+</section>
+{% endblock %}
