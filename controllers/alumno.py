@@ -22,7 +22,9 @@ alumno_bp = Blueprint("alumno", __name__)
 def dashboard():
     id_alumno = obtener_id_usuario_autenticado()
 
-    cursos = Curso.query.all()
+    cursos = Curso.query.filter_by(
+        estado_curso="publicado"
+    ).all()
 
     for curso in cursos:
         curso.esta_inscrito = Inscripcion.query.filter_by(
@@ -36,7 +38,7 @@ def dashboard():
         cursos=cursos,
     )
 
-# Mostrar cursos
+# Mostrar cursos inscritos
 @alumno_bp.route("/cursos")
 @sesion_requerida
 @rol_requerido(ROL_ALUMNO)
