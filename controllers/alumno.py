@@ -43,12 +43,14 @@ def dashboard():
 @sesion_requerida
 @rol_requerido(ROL_ALUMNO)
 def listar_cursos():
-    estado_filtrado = request.args.get("estado", "").strip().lower()
-
     consulta = (
         Curso.query
         .join(Inscripcion, Inscripcion.id_curso == Curso.id_curso)
-        .filter(Inscripcion.id_alumno == obtener_id_usuario_autenticado())
+        .filter(
+            Inscripcion.id_alumno == obtener_id_usuario_autenticado(),
+            Inscripcion.estado_inscripcion == "activa",
+            Curso.estado_curso == "publicado",
+        )
     )
 
     cursos = consulta.order_by(Curso.id_curso.desc()).all()
@@ -65,7 +67,10 @@ def listar_cursos():
 def detalle_curso(id_curso):
     id_alumno = obtener_id_usuario_autenticado()
 
-    curso = Curso.query.get_or_404(id_curso)
+    curso = Curso.query.filter_by(
+        id_curso=id_curso,
+        estado_curso="publicado",
+    ).first_or_404()
 
     lugares_disponibles = contar_lugares_disponibles(curso.id_curso)
 
