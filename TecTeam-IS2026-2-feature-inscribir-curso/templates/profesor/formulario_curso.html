@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Crear curso' if modo == 'crear' else 'Editar curso' }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{{ 'Crear curso' if modo == 'crear' else 'Editar curso' }}</h1>
+        <p>{{ 'Registra un nuevo curso. Se creará como borrador.' if modo == 'crear' else 'Actualiza la información básica del curso.' }}</p>
+    </div>
+    <div class="actions">
+        <a class="button light" href="{{ '/profesor/cursos' if modo == 'crear' else '/profesor/cursos/' ~ curso.id_curso }}">Cancelar</a>
+    </div>
+</section>
+
+<section class="card">
+    {% if not idiomas %}
+        <div class="message error">No hay idiomas registrados. Ejecuta el script de población o registra idiomas en la base de datos.</div>
+    {% endif %}
+
+    <form method="post">
+        <div class="form-grid">
+            <div>
+                <label for="codigo">Código</label>
+                <input id="codigo" name="codigo" value="{{ datos.codigo }}" placeholder="ING-A1-001" required>
+            </div>
+
+            <div>
+                <label for="nombre">Nombre del curso</label>
+                <input id="nombre" name="nombre" value="{{ datos.nombre }}" placeholder="Inglés básico A1" required>
+            </div>
+
+            <div>
+                <label for="id_idioma">Idioma</label>
+                <select id="id_idioma" name="id_idioma" required>
+                    <option value="">Selecciona un idioma</option>
+                    {% for idioma in idiomas %}
+                        <option value="{{ idioma.id_idioma }}" {{ 'selected' if datos.id_idioma|string == idioma.id_idioma|string else '' }}>
+                            {{ idioma.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="nivel_requerido">Nivel requerido</label>
+                <input id="nivel_requerido" name="nivel_requerido" type="number" min="1" value="{{ datos.nivel_requerido }}" required>
+            </div>
+
+            <div>
+                <label for="modalidad">Modalidad</label>
+                <select id="modalidad" name="modalidad">
+                    <option value="">Sin definir</option>
+                    {% for modalidad in modalidades %}
+                        <option value="{{ modalidad }}" {{ 'selected' if datos.modalidad == modalidad else '' }}>
+                            {{ modalidad }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="cupo_maximo">Cupo máximo</label>
+                <input id="cupo_maximo" name="cupo_maximo" type="number" min="1" value="{{ datos.cupo_maximo }}" placeholder="25">
+            </div>
+        </div>
+
+        <div class="actions form-actions">
+            <button class="button" type="submit">{{ 'Crear curso' if modo == 'crear' else 'Guardar cambios' }}</button>
+            <a class="button light" href="{{ '/profesor/cursos' if modo == 'crear' else '/profesor/cursos/' ~ curso.id_curso }}">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

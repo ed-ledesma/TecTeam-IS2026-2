@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Mis cursos{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Mis cursos</h1>
+        <p>Consulta, edita, publica o cierra los cursos que administras.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/profesor/cursos/crear">Crear curso</a>
+    </div>
+</section>
+
+<section class="card filters-card">
+    <form method="get" class="actions">
+        <a class="button small {{ 'secondary' if not estado_filtrado else 'light' }}" href="/profesor/cursos">Todos</a>
+        {% for estado in estados %}
+            <a class="button small {{ 'secondary' if estado_filtrado == estado else 'light' }}" href="/profesor/cursos?estado={{ estado }}">
+                {{ estado|capitalize }}
+            </a>
+        {% endfor %}
+    </form>
+</section>
+
+{% if cursos %}
+<section class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Curso</th>
+                <th>Idioma</th>
+                <th>Nivel</th>
+                <th>Modalidad</th>
+                <th>Cupo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for curso in cursos %}
+            <tr>
+                <td>{{ curso.codigo }}</td>
+                <td>{{ curso.nombre }}</td>
+                <td>{{ curso.idioma.nombre }}</td>
+                <td>{{ curso.nivel_requerido }}</td>
+                <td>{{ curso.modalidad or 'Sin definir' }}</td>
+                <td>{{ curso.cupo_maximo or 'Sin límite' }}</td>
+                <td>
+                    <span class="badge {{ 'success' if curso.estado_curso == 'publicado' else 'warning' if curso.estado_curso == 'borrador' else 'muted' }}">
+                        {{ curso.estado_curso }}
+                    </span>
+                </td>
+                <td>
+                    <div class="actions compact-actions">
+                        <a class="button small light" href="/profesor/cursos/{{ curso.id_curso }}">Ver</a>
+                        <a class="button small secondary" href="/profesor/cursos/{{ curso.id_curso }}/editar">Editar</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% else %}
+<section class="card">
+    <h2>No hay cursos para mostrar</h2>
+    <p class="muted">Crea tu primer curso o cambia el filtro seleccionado.</p>
+    <div class="actions section-spaced-small">
+        <a class="button" href="/profesor/cursos/crear">Crear curso</a>
+        <a class="button light" href="/profesor/cursos">Quitar filtros</a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ curso.nombre }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{{ curso.nombre }}</h1>
+        <p>{{ curso.codigo }} · {{ curso.idioma.nombre }}</p>
+    </div>
+
+    <div class="actions">
+        <a class="button light" href="/alumno/cursos">Volver</a>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <strong>{{ curso.nivel_requerido }}</strong>
+        <span>Nivel requerido</span>
+    </article>
+
+    <article class="stat-card">
+        <strong>{{ curso.modalidad or 'Sin definir' }}</strong>
+        <span>Modalidad</span>
+    </article>
+
+    <article class="stat-card">
+        <strong>{{ curso.cupo_maximo or 'Sin límite' }}</strong>
+        <span>Cupo máximo</span>
+    </article>
+
+    <article class="stat-card">
+        <strong>{{ lugares_disponibles }}</strong>
+        <span>Lugares disponibles</span>
+    </article>
+</section>
+
+<section class="card section-spaced">
+    <h2>Materiales del curso</h2>
+
+    {% if materiales %}
+        <ul class="materials-list">
+            {% for material in materiales %}
+                <li>
+                    <strong>{{ material.titulo }}</strong>
+
+                    {% if material.descripcion %}
+                        <p class="muted">{{ material.descripcion }}</p>
+                    {% endif %}
+
+                    {% if material.url_archivo %}
+                        <a class="button small light"
+                           href="{{ material.url_archivo }}"
+                           target="_blank">
+                            Ver material
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p class="muted">
+            Este curso aún no tiene materiales disponibles.
+        </p>
+    {% endif %}
+</section>
+
+{% if not esta_inscrito %}
+<section class="actions section-spaced">
+    <form method="post" action="/alumno/cursos/{{ curso.id_curso }}/inscribir">
+        <button class="button" type="submit">
+            Inscribir
+        </button>
+    </form>
+</section>
+{% endif %}
+
+{% endblock %}

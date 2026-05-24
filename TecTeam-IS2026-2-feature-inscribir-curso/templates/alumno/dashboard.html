@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Panel alumno{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Panel de alumno</h1>
+        <p>Explora los cursos disponibles e inscríbete.</p>
+    </div>
+</section>
+
+<section class="card section-spaced">
+    <div class="page-header compact">
+        <div>
+            <h2>Cursos disponibles</h2>
+            <p>Listado de cursos registrados en la plataforma.</p>
+        </div>
+    </div>
+
+    {% if cursos %}
+        <div class="table-card flat">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Curso</th>
+                        <th>Idioma</th>
+                        <th>Profesor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                    <tr>
+                        <td>{{ curso.codigo }}</td>
+                        <td>{{ curso.nombre }}</td>
+                        <td>{{ curso.idioma.nombre }}</td>
+                        <td>
+                            {{ curso.profesor.usuario.nombres }}
+                            {{ curso.profesor.usuario.apellido_paterno }}
+                        </td>
+                        <td>
+                            <a class="button small light"
+                            href="/alumno/cursos/{{ curso.id_curso }}">
+                                Ver
+                            </a>
+
+                            {% if not curso.esta_inscrito %}
+                                <form class="inline"
+                                    method="post"
+                                    action="/alumno/cursos/{{ curso.id_curso }}/inscribir">
+                                    <button class="button small" type="submit">
+                                        Inscribir
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">No hay cursos disponibles.</p>
+    {% endif %}
+</section>
+{% endblock %}

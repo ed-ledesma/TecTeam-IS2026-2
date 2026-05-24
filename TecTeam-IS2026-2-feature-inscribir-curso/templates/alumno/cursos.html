@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Mis cursos{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Mis cursos</h1>
+        <p>Consulta los cursos en los que estás inscrito.</p>
+    </div>
+</section>
+
+{% if cursos %}
+<section class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Curso</th>
+                <th>Idioma</th>
+                <th>Nivel</th>
+                <th>Modalidad</th>
+                <th>Cupo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for curso in cursos %}
+            <tr>
+                <td>{{ curso.codigo }}</td>
+                <td>{{ curso.nombre }}</td>
+                <td>{{ curso.idioma.nombre }}</td>
+                <td>{{ curso.nivel_requerido }}</td>
+                <td>{{ curso.modalidad or 'Sin definir' }}</td>
+                <td>{{ curso.cupo_maximo or 'Sin límite' }}</td>
+
+                <td>
+                    <div class="actions compact-actions">
+                        <a class="button small light"
+                           href="/alumno/cursos/{{ curso.id_curso }}">
+                            Ver
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% else %}
+<section class="card">
+    <h2>No tienes cursos inscritos</h2>
+
+    <p class="muted">
+        Actualmente no estás inscrito en ningún curso.
+    </p>
+</section>
+{% endif %}
+
+{% endblock %}

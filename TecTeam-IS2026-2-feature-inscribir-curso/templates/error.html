@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo or "Error" }}{% endblock %}
+{% block page_class %}centered{% endblock %}
+
+{% block content %}
+<section class="card narrow">
+    <h1>{{ titulo or "Error" }}</h1>
+    <p>{{ mensaje or "Ocurrió un problema al procesar la solicitud." }}</p>
+
+    <div class="actions" style="margin-top: 24px;">
+        <a class="button" href="{{ enlace or '/login' }}">{{ texto_enlace or "Volver al login" }}</a>
+    </div>
+</section>
+{% endblock %}

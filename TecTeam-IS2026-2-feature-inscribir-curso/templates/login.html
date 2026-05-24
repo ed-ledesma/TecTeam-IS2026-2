@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar sesión{% endblock %}
+{% block page_class %}centered{% endblock %}
+
+{% block content %}
+<section class="card narrow">
+    <h1>Iniciar sesión</h1>
+    <p class="muted">Accede al Sistema de Gestión de Cursos de Idiomas.</p>
+
+    <form action="/login" method="POST" class="grid" style="margin-top: 24px;">
+        <div>
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" name="correo" placeholder="correo@ejemplo.com" required>
+        </div>
+
+        <div>
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" name="password" placeholder="Contraseña" required>
+        </div>
+
+        <button class="button" type="submit">Ingresar</button>
+    </form>
+</section>
+{% endblock %}
