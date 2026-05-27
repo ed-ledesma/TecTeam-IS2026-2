@@ -563,6 +563,26 @@ pytest.ini
 
 `pytest.ini` indica que pytest debe buscar pruebas dentro de `tests/` y ejecutar archivos con nombre `test_*.py`.
 
+### Nota sobre warnings al ejecutar los tests
+
+Al ejecutar los tests puede aparecer una advertencia relacionada con `datetime.utcnow()`:
+
+```bash
+DeprecationWarning: datetime.datetime.utcnow() is deprecated
+```
+
+Esto no significa que los tests estén fallando. Mientras el resultado final sea similar a:
+
+```bash
+24 passed
+```
+
+la suite de pruebas se ejecutó correctamente.
+
+El warning aparece porque algunas partes del proyecto usan `datetime.utcnow()` para guardar fechas en UTC, y en versiones recientes de Python esta forma de manejar fechas está marcada como obsoleta. El sistema sigue funcionando, pero Python recomienda usar fechas con información explícita de zona horaria.
+
+Por ahora, estos warnings son informativos y no bloquean la ejecución de los tests.
+
 ---
 
 ## Scripts útiles
