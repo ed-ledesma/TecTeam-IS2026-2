@@ -13,10 +13,13 @@ from models import db
 load_dotenv(override=True)
 
 
-def create_app():
+def create_app(config_overrides=None):
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = crear_uri_base_datos()
     app.config["SECRET_KEY"] = obtener_clave_secreta()
+
+    if config_overrides:
+        app.config.update(config_overrides)
 
     db.init_app(app)
     registrar_blueprints(app)
