@@ -1,0 +1,166 @@
+diff -ruN proyecto_con_tests/README.md proyecto_con_tests_readme/README.md
+--- proyecto_con_tests/README.md	2026-05-27 01:49:32.929653215 +0000
++++ proyecto_con_tests_readme/README.md	2026-05-27 02:06:50.201556201 +0000
+@@ -18,6 +18,7 @@
+ - [Ejecutar la aplicación](#ejecutar-la-aplicación)
+ - [Credenciales de prueba](#credenciales-de-prueba)
+ - [Cómo probar el sistema](#cómo-probar-el-sistema)
++- [Tests automatizados](#tests-automatizados)
+ - [Scripts útiles](#scripts-útiles)
+ - [Estructura del proyecto](#estructura-del-proyecto)
+ - [Rutas principales](#rutas-principales)
+@@ -39,6 +40,7 @@
+ - Werkzeug
+ - python-dotenv
+ - MySQL
++- Pytest
+ - HTML, CSS y Jinja2
+ 
+ ---
+@@ -443,6 +445,126 @@
+ 
+ ---
+ 
++## Tests automatizados
++
++El proyecto incluye una suite de pruebas automatizadas con **pytest**. Estas pruebas cubren los casos de uso que ya están integrados en el sistema, excepto **Subir material**, que se mantiene pendiente según el estado actual del proyecto.
++
++### Casos de uso cubiertos
++
++Cada caso de uso tiene su propio archivo dentro de la carpeta `tests/`:
++
++| Caso de uso | Archivo de test |
++|---|---|
++| Iniciar sesión | `tests/test_iniciar_sesion.py` |
++| Crear cuenta | `tests/test_crear_cuenta.py` |
++| Inscribir curso | `tests/test_inscribir_curso.py` |
++| Consultar material | `tests/test_consultar_material.py` |
++| Crear curso | `tests/test_crear_curso.py` |
++| Publicar curso | `tests/test_publicar_curso.py` |
++| Cerrar curso | `tests/test_cerrar_eliminar_curso.py` |
++| Crear profesor | `tests/test_crear_profesor.py` |
++| Consultar profesor | `tests/test_consultar_profesor.py` |
++| Actualizar profesor | `tests/test_actualizar_profesor.py` |
++| Eliminar profesor | `tests/test_eliminar_profesor.py` |
++| Eliminar cuentas | `tests/test_eliminar_cuentas.py` |
++
++> En el estado actual del sistema, "eliminar profesor" y "eliminar cuentas" se prueban como **desactivación de usuarios**, porque la aplicación no elimina físicamente esos registros.
++
++### Cómo ejecutar los tests
++
++Desde la raíz del proyecto, activa tu entorno virtual e instala las dependencias:
++
++```bash
++pip install -r requirements.txt
++```
++
++Luego ejecuta:
++
++```bash
++pytest
++```
++
++También puedes ejecutar un archivo específico:
++
++```bash
++pytest tests/test_iniciar_sesion.py
++```
++
++O ejecutar una prueba específica dentro de un archivo:
++
++```bash
++pytest tests/test_iniciar_sesion.py::test_login_admin_redirige_al_dashboard_admin
++```
++
++### Cómo funcionan grosso modo
++
++Los tests usan el cliente de pruebas de Flask, por lo que no levantan un servidor web real. En lugar de entrar desde el navegador, las pruebas hacen peticiones internas a las rutas del sistema, por ejemplo `GET /login`, `POST /login`, `POST /profesor/cursos/crear` o `POST /alumno/cursos/<id>/inscribir`.
++
++La configuración de testing se encuentra en `tests/conftest.py`. Ahí se crea una aplicación Flask en modo prueba y se usa una base de datos **SQLite en memoria**:
++
++```python
++"SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"
++```
++
++Esto significa que los tests no usan tu base de datos MySQL real, no necesitan ejecutar `DB.sql` y no modifican datos locales de desarrollo. Cada prueba inicia con una base limpia y al terminar se eliminan las tablas creadas para esa ejecución.
++
++El archivo `tests/factories.py` contiene funciones auxiliares para crear datos de prueba de forma legible, como usuarios, alumnos, profesores, idiomas, cursos, inscripciones y materiales. Esto evita repetir demasiado código dentro de cada archivo de test.
++
++En general, cada prueba sigue este flujo:
++
++1. Crea los datos mínimos necesarios para el caso de uso.
++2. Inicia sesión con el rol correspondiente cuando la ruta lo requiere.
++3. Ejecuta la petición HTTP usando `client.get(...)` o `client.post(...)`.
++4. Verifica la respuesta y, cuando aplica, consulta la base de datos para confirmar que el cambio se guardó correctamente.
++
++Ejemplo simplificado:
++
++```python
++def test_profesor_puede_crear_curso(client, idioma):
++    profesor = crear_profesor()
++    db.session.commit()
++
++    iniciar_sesion(client, profesor, ROL_PROFESOR)
++
++    respuesta = client.post(
++        "/profesor/cursos/crear",
++        data=datos_formulario_curso(idioma),
++        follow_redirects=True,
++    )
++
++    curso = Curso.query.filter_by(codigo="ING-A1-100").first()
++
++    assert respuesta.status_code == 200
++    assert curso is not None
++    assert curso.estado_curso == "borrador"
++```
++
++### Archivos relacionados con testing
++
++```text
++tests/
++├── conftest.py
++├── factories.py
++├── test_iniciar_sesion.py
++├── test_crear_cuenta.py
++├── test_inscribir_curso.py
++├── test_consultar_material.py
++├── test_crear_curso.py
++├── test_publicar_curso.py
++├── test_cerrar_eliminar_curso.py
++├── test_crear_profesor.py
++├── test_consultar_profesor.py
++├── test_actualizar_profesor.py
++├── test_eliminar_profesor.py
++└── test_eliminar_cuentas.py
++
++pytest.ini
++```
++
++`pytest.ini` indica que pytest debe buscar pruebas dentro de `tests/` y ejecutar archivos con nombre `test_*.py`.
++
++---
++
+ ## Scripts útiles
+ 
+ ### Poblar datos de prueba
+@@ -497,6 +619,7 @@
+ ├── DB.sql
+ ├── README.md
+ ├── requirements.txt
++├── pytest.ini
+ ├── .env
+ │
+ ├── controllers/
+@@ -538,6 +661,11 @@
+ │   └── alumno/
+ │       └── dashboard.html
+ │
++├── tests/
++│   ├── conftest.py
++│   ├── factories.py
++│   └── test_*.py
++│
+ ├── utils/
+ │   ├── auth.py
+ │   └── niveles.py

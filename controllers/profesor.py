@@ -202,7 +202,7 @@ def obtener_idiomas_disponibles():
 
 
 def obtener_curso_propio(id_curso):
-    curso = Curso.query.get_or_404(id_curso)
+    curso = db.get_or_404(Curso, id_curso)
 
     if curso.id_profesor != obtener_id_usuario_autenticado():
         abort(403)

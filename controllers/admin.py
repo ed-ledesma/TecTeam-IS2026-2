@@ -126,7 +126,7 @@ def crear_usuario():
 @sesion_requerida
 @rol_requerido(ROL_ADMINISTRADOR)
 def editar_usuario(id_usuario):
-    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario = db.get_or_404(Usuario, id_usuario)
     rol_actual = encontrar_rol_de_usuario(usuario.id_usuario)
 
     if request.method == "POST":
@@ -174,7 +174,7 @@ def editar_usuario(id_usuario):
 @sesion_requerida
 @rol_requerido(ROL_ADMINISTRADOR)
 def activar_usuario(id_usuario):
-    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario = db.get_or_404(Usuario, id_usuario)
     usuario.activo = True
     db.session.commit()
     flash("Usuario activado correctamente.", "success")
@@ -185,7 +185,7 @@ def activar_usuario(id_usuario):
 @sesion_requerida
 @rol_requerido(ROL_ADMINISTRADOR)
 def desactivar_usuario(id_usuario):
-    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario = db.get_or_404(Usuario, id_usuario)
     usuario.activo = False
     db.session.commit()
     flash("Usuario desactivado correctamente.", "success")
