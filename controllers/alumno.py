@@ -81,10 +81,13 @@ def detalle_curso(id_curso):
         estado_inscripcion="activa",
     ).first() is not None
 
-    materiales = Material.query.filter_by(
-        id_curso=curso.id_curso,
-        visible=True,
-    ).all()
+    materiales = []
+
+    if esta_inscrito:
+        materiales = Material.query.filter_by(
+            id_curso=curso.id_curso,
+            visible=True,
+        ).all()
 
     return render_template(
         "alumno/detalle_curso.html",
