@@ -8,7 +8,9 @@ from models import db
 from models.Administrador import Administrador
 from models.Alumno import Alumno
 from models.Curso import Curso
+from models.Idioma import Idioma
 from models.Inscripcion import Inscripcion
+from models.NivelAlumno import NivelAlumno
 from models.Profesor import Profesor
 from models.Usuario import Usuario
 from utils.auth import (
@@ -93,6 +95,7 @@ def crear_usuario():
                 modo="crear",
                 datos=datos,
                 roles=ROLES_PERMITIDOS,
+                idiomas=Idioma.query.all(),
             ), 400
 
         usuario = construir_usuario(datos)
@@ -103,6 +106,12 @@ def crear_usuario():
         asignacion_rol.id_usuario = usuario.id_usuario
         db.session.add(asignacion_rol)
 
+        if datos["rol"] == ROL_ALUMNO:
+
+            guardar_niveles_alumno(
+                usuario.id_usuario
+            )
+
         if guardar_cambios():
             flash("Usuario creado correctamente.", "success")
             return redirect(url_for("admin.listar_usuarios"))
@@ -112,6 +121,7 @@ def crear_usuario():
             modo="crear",
             datos=datos,
             roles=ROLES_PERMITIDOS,
+            idiomas=Idioma.query.all(),
         ), 400
 
     return render_template(
@@ -119,6 +129,7 @@ def crear_usuario():
         modo="crear",
         datos=datos_iniciales_usuario(),
         roles=ROLES_PERMITIDOS,
+        idiomas=Idioma.query.all(),
     )
 
 
@@ -142,10 +153,14 @@ def editar_usuario(id_usuario):
                 rol_actual=rol_actual,
                 datos=datos,
                 roles=ROLES_PERMITIDOS,
+                idiomas=Idioma.query.all(),
             ), 400
 
         actualizar_usuario(usuario, datos)
         actualizar_asignacion_rol(usuario, rol_actual, datos)
+
+        if datos["rol"] == ROL_ALUMNO:
+            guardar_niveles_alumno(usuario.id_usuario)
 
         if guardar_cambios():
             flash("Usuario actualizado correctamente.", "success")
@@ -158,7 +173,16 @@ def editar_usuario(id_usuario):
             rol_actual=rol_actual,
             datos=datos,
             roles=ROLES_PERMITIDOS,
+            idiomas=Idioma.query.all(),
+            niveles_alumno=niveles_alumno,
         ), 400
+    
+    niveles_alumno = {
+        nivel.id_idioma: nivel.nivel
+        for nivel in NivelAlumno.query.filter_by(
+            id_usuario=usuario.id_usuario
+        ).all()
+    }
 
     return render_template(
         "admin/formulario_usuario.html",
@@ -167,6 +191,8 @@ def editar_usuario(id_usuario):
         rol_actual=rol_actual,
         datos=datos_desde_usuario(usuario, rol_actual),
         roles=ROLES_PERMITIDOS,
+        idiomas=Idioma.query.all(),
+        niveles_alumno=niveles_alumno,
     )
 
 
@@ -190,6 +216,44 @@ def desactivar_usuario(id_usuario):
     db.session.commit()
     flash("Usuario desactivado correctamente.", "success")
     return redirect(url_for("admin.listar_usuarios"))
+
+
+def guardar_niveles_alumno(id_usuario):
+
+    idiomas = Idioma.query.all()
+
+    for idioma in idiomas:
+
+        valor = request.form.get(
+            f"nivel_idioma_{idioma.id_idioma}"
+        )
+
+        if not valor:
+            continue
+
+        try:
+            nivel = int(valor)
+        except ValueError:
+            continue
+
+        nivel_existente = NivelAlumno.query.filter_by(
+            id_usuario=id_usuario,
+            id_idioma=idioma.id_idioma,
+        ).first()
+
+        if nivel_existente:
+
+            nivel_existente.nivel = nivel
+
+        else:
+
+            nuevo_nivel = NivelAlumno(
+                id_usuario=id_usuario,
+                id_idioma=idioma.id_idioma,
+                nivel=nivel,
+            )
+
+            db.session.add(nuevo_nivel)
 
 
 def agregar_rol_a_usuarios(usuarios):

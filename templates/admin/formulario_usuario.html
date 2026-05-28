@@ -61,6 +61,51 @@
                     <input id="matricula" name="matricula" value="{{ datos.matricula }}">
                 </div>
             </div>
+            <h4 style="margin-top: 25px;">Niveles por idioma</h4>
+            <div class="form-grid">
+                {% for idioma in idiomas %}
+                <div>
+                    <label>
+                        {{ idioma.nombre }}
+                    </label>
+
+                    {% set niveles = niveles_alumno | default({}) %}
+                    {% set nivel_actual = niveles.get(idioma.id_idioma) %}
+
+                    <select name="nivel_idioma_{{ idioma.id_idioma }}">
+                        <option value=""
+                            {% if nivel_actual is none %}selected{% endif %}>
+                            Sin nivel
+                        </option>
+
+                        <option value="1"
+                            {% if nivel_actual == 1 %}selected{% endif %}>
+                            1 - Básico
+                        </option>
+
+                        <option value="2"
+                            {% if nivel_actual == 2 %}selected{% endif %}>
+                            2 - Básico alto
+                        </option>
+
+                        <option value="3"
+                            {% if nivel_actual == 3 %}selected{% endif %}>
+                            3 - Intermedio
+                        </option>
+
+                        <option value="4"
+                            {% if nivel_actual == 4 %}selected{% endif %}>
+                            4 - Intermedio alto
+                        </option>
+
+                        <option value="5"
+                            {% if nivel_actual == 5 %}selected{% endif %}>
+                            5 - Avanzado
+                        </option>
+                    </select>
+                </div>
+                {% endfor %}
+            </div>
         </section>
 
         <section class="form-section" data-role-section="profesor">
