@@ -42,20 +42,35 @@
     {% if materiales %}
         <ul class="materials-list">
             {% for material in materiales %}
-                <li>
-                    <strong>{{ material.titulo }}</strong>
+                <li class="card section-spaced-small">
 
-                    {% if material.descripcion %}
-                        <p class="muted">{{ material.descripcion }}</p>
-                    {% endif %}
+                    <div class="actions"
+                         style="justify-content: space-between; align-items: center;">
 
-                    {% if material.url_archivo %}
-                        <a class="button small light"
-                           href="{{ material.url_archivo }}"
-                           target="_blank">
-                            Ver material
-                        </a>
-                    {% endif %}
+                        <div>
+                            <strong>{{ material.titulo }}</strong>
+
+                            {% if material.tipo_material %}
+                                <p class="muted">
+                                    {{ material.tipo_material }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="actions">
+                            {% if material.url_archivo %}
+                                <a
+                                    class="button small light"
+                                    href="{{ material.url_archivo }}"
+                                    target="_blank"
+                                >
+                                    Ver material
+                                </a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
                 </li>
             {% endfor %}
         </ul>

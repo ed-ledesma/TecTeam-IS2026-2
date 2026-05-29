@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ 'Agregar material' if modo == 'crear' else 'Editar material' }}
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>
+            {{ 'Agregar material' if modo == 'crear' else 'Editar material' }}
+        </h1>
+
+        <p>
+            {{ 'Agrega nuevo material para el curso.'
+               if modo == 'crear'
+               else 'Actualiza la información del material.' }}
+        </p>
+    </div>
+
+    <div class="actions">
+        <a
+            class="button light"
+            href="/profesor/cursos/{{ curso.id_curso }}"
+        >
+            Cancelar
+        </a>
+    </div>
+</section>
+
+<section class="card">
+
+    <form method="post">
+
+        <div class="form-grid">
+
+            <div>
+                <label for="titulo">
+                    Título
+                </label>
+
+                <input
+                    id="titulo"
+                    name="titulo"
+                    value="{{ datos.titulo }}"
+                    placeholder="Guía de gramática unidad 1"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="tipo_material">
+                    Tipo de material
+                </label>
+
+                <select
+                    id="tipo_material"
+                    name="tipo_material"
+                    required
+                >
+                    <option value="">
+                        Selecciona un tipo
+                    </option>
+
+                    {% for tipo in tipos_material %}
+                        <option
+                            value="{{ tipo }}"
+                            {{ 'selected'
+                               if datos.tipo_material == tipo
+                               else '' }}
+                        >
+                            {{ tipo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="url_archivo">
+                    URL del archivo
+                </label>
+
+                <input
+                    type="url"
+                    id="url_archivo"
+                    name="url_archivo"
+                    value="{{ datos.url_archivo }}"
+                    placeholder="https://ejemplo.com/material.pdf"
+                    required
+                >
+            </div>
+
+        </div>
+
+        <div class="actions form-actions">
+
+            <button class="button" type="submit">
+                {{ 'Agregar material'
+                   if modo == 'crear'
+                   else 'Guardar cambios' }}
+            </button>
+
+            <a
+                class="button light"
+                href="/profesor/cursos/{{ curso.id_curso }}"
+            >
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</section>
+{% endblock %}
