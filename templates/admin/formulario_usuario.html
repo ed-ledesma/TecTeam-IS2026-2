@@ -73,34 +73,34 @@
                     {% set nivel_actual = niveles.get(idioma.id_idioma) %}
 
                     <select name="nivel_idioma_{{ idioma.id_idioma }}">
-                        <option value=""
-                            {% if nivel_actual is none %}selected{% endif %}>
-                            Sin nivel
-                        </option>
-
                         <option value="1"
                             {% if nivel_actual == 1 %}selected{% endif %}>
-                            1 - Básico
+                            1 - A1
                         </option>
 
                         <option value="2"
                             {% if nivel_actual == 2 %}selected{% endif %}>
-                            2 - Básico alto
+                            2 - A2
                         </option>
 
                         <option value="3"
                             {% if nivel_actual == 3 %}selected{% endif %}>
-                            3 - Intermedio
+                            3 - B1
                         </option>
 
                         <option value="4"
                             {% if nivel_actual == 4 %}selected{% endif %}>
-                            4 - Intermedio alto
+                            4 - B2
                         </option>
 
                         <option value="5"
                             {% if nivel_actual == 5 %}selected{% endif %}>
-                            5 - Avanzado
+                            5 - C1
+                        </option> 
+
+                        <option value="6"
+                            {% if nivel_actual == 6 %}selected{% endif %}>
+                            6 - C2
                         </option>
                     </select>
                 </div>
