@@ -54,59 +54,59 @@
         </div>
 
         <section class="form-section" data-role-section="alumno">
-    <h2>Datos de alumno</h2>
+            <h2>Datos de alumno</h2>
+            <div class="form-grid">
+                <div>
+                    <label for="matricula">Matrícula</label>
+                    <input id="matricula" name="matricula" value="{{ datos.matricula }}">
+                </div>
+            </div>
+            <h4 style="margin-top: 25px;">Niveles por idioma</h4>
+            <div class="form-grid">
+                {% for idioma in idiomas %}
+                <div>
+                    <label>
+                        {{ idioma.nombre }}
+                    </label>
 
-    <div class="form-grid">
-        <div>
-            <label for="matricula">Matrícula</label>
-            <input
-                id="matricula"
-                name="matricula"
-                value="{{ datos.matricula }}"
-            >
-        </div>
-    </div>
+                    {% set niveles = niveles_alumno | default({}) %}
+                    {% set nivel_actual = niveles.get(idioma.id_idioma) %}
 
-    <h3 style="margin-top: 25px;">Niveles por idioma</h3>
+                    <select name="nivel_idioma_{{ idioma.id_idioma }}">
+                        <option value="1"
+                            {% if nivel_actual == 1 %}selected{% endif %}>
+                            1 - A1
+                        </option>
 
-    <div class="form-grid">
-        {% for idioma in idiomas %}
-        <div>
-            <label>
-                {{ idioma.nombre }}
-            </label>
+                        <option value="2"
+                            {% if nivel_actual == 2 %}selected{% endif %}>
+                            2 - A2
+                        </option>
 
-            <select
-                name="nivel_idioma_{{ idioma.id_idioma }}"
-            >
-                <option value="">
-                    Sin nivel
-                </option>
+                        <option value="3"
+                            {% if nivel_actual == 3 %}selected{% endif %}>
+                            3 - B1
+                        </option>
 
-                <option value="1">
-                    1 - Básico
-                </option>
+                        <option value="4"
+                            {% if nivel_actual == 4 %}selected{% endif %}>
+                            4 - B2
+                        </option>
 
-                <option value="2">
-                    2 - Básico alto
-                </option>
+                        <option value="5"
+                            {% if nivel_actual == 5 %}selected{% endif %}>
+                            5 - C1
+                        </option> 
 
-                <option value="3">
-                    3 - Intermedio
-                </option>
-
-                <option value="4">
-                    4 - Intermedio alto
-                </option>
-
-                <option value="5">
-                    5 - Avanzado
-                </option>
-            </select>
-        </div>
-        {% endfor %}
-    </div>
-</section>
+                        <option value="6"
+                            {% if nivel_actual == 6 %}selected{% endif %}>
+                            6 - C2
+                        </option>
+                    </select>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
 
         <section class="form-section" data-role-section="profesor">
             <h2>Datos de profesor</h2>

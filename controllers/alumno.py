@@ -81,10 +81,13 @@ def detalle_curso(id_curso):
         estado_inscripcion="activa",
     ).first() is not None
 
-    materiales = Material.query.filter_by(
-        id_curso=curso.id_curso,
-        visible=True,
-    ).all()
+    materiales = []
+
+    if esta_inscrito:
+        materiales = Material.query.filter_by(
+            id_curso=curso.id_curso,
+            visible=True,
+        ).all()
 
     return render_template(
         "alumno/detalle_curso.html",
@@ -101,7 +104,7 @@ def detalle_curso(id_curso):
 def inscribir_curso(id_curso):
     id_alumno = obtener_id_usuario_autenticado()
 
-    curso = Curso.query.get_or_404(id_curso)
+    curso = db.get_or_404(Curso, id_curso)
 
     # Verificar si ya está inscrito
     inscripcion_existente = Inscripcion.query.filter_by(
@@ -154,7 +157,7 @@ def inscribir_curso(id_curso):
 
 
 def contar_lugares_disponibles(id_curso):
-    curso = Curso.query.get_or_404(id_curso)
+    curso = db.get_or_404(Curso, id_curso)
 
     inscripciones_activas = Inscripcion.query.filter_by(
         id_curso=id_curso,
