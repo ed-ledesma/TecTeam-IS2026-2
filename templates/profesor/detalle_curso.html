@@ -55,4 +55,72 @@
         {% endif %}
     </div>
 </section>
+<section class="card section-spaced">
+    <div class="actions" style="justify-content: space-between;">
+        <h2>Materiales del curso</h2>
+
+        {% if curso.estado_curso == 'publicado' %}
+            <a
+                class="button"
+                href="/profesor/cursos/{{ curso.id_curso }}/materiales/crear"
+            >
+                Agregar material
+            </a>
+        {% endif %}
+    </div>
+
+    {% if materiales %}
+        <ul class="materials-list">
+            {% for material in materiales %}
+                <li class="card section-spaced-small">
+
+                    <div class="actions"
+                         style="justify-content: space-between; align-items: center;">
+
+                        <div>
+                            <strong>{{ material.titulo }}</strong>
+
+                            {% if material.tipo_material %}
+                                <p class="muted">
+                                    {{ material.tipo_material }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <div class="actions">
+                            {% if material.url_archivo %}
+                                <a
+                                    class="button small light"
+                                    href="{{ material.url_archivo }}"
+                                    target="_blank"
+                                >
+                                    Ver material
+                                </a>
+                            {% endif %}
+
+                            <a
+                                class="button small secondary"
+                                href="/profesor/cursos/{{ curso.id_curso }}/materiales/{{ material.id_material }}/editar"
+                            >
+                                Editar
+                            </a>
+                        </div>
+
+                    </div>
+
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p class="muted">
+            Este curso aún no tiene materiales disponibles.
+        </p>
+
+        {% if curso.estado_curso == 'publicado' %}
+            <div class="section-spaced-small">
+            </div>
+        {% endif %}
+    {% endif %}
+</section>
 {% endblock %}

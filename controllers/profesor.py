@@ -5,6 +5,8 @@ from models import db
 from models.Curso import Curso
 from models.Idioma import Idioma
 from models.Inscripcion import Inscripcion
+from models.Material import Material
+
 from utils.auth import (
     ROL_PROFESOR,
     obtener_id_usuario_autenticado,
@@ -103,10 +105,16 @@ def crear_curso():
 def detalle_curso(id_curso):
     curso = obtener_curso_propio(id_curso)
     inscripciones_activas = contar_inscripciones_activas(curso.id_curso)
+
+    materiales = Material.query.filter_by(
+        id_curso=curso.id_curso,
+    ).all()
+
     return render_template(
         "profesor/detalle_curso.html",
         curso=curso,
         inscripciones_activas=inscripciones_activas,
+        materiales=materiales,
     )
 
 
@@ -182,6 +190,208 @@ def cerrar_curso(id_curso):
     db.session.commit()
     flash("Curso cerrado correctamente.", "success")
     return redirect(url_for("profesor.detalle_curso", id_curso=curso.id_curso))
+
+
+@profesor_bp.route("/cursos/<int:id_curso>/materiales/crear", methods=["GET", "POST"])
+@sesion_requerida
+@rol_requerido(ROL_PROFESOR)
+def crear_material(id_curso):
+    curso = obtener_curso_propio(id_curso)
+
+    tipos_material = (
+        "PDF",
+        "Documento",
+        "Presentación",
+        "Video",
+        "Enlace",
+        "Otro",
+    )
+
+    if request.method == "POST":
+        datos = obtener_datos_formulario_material()
+        errores = validar_datos_material(datos)
+
+        if errores:
+            mostrar_errores(errores)
+
+            return render_template(
+                "profesor/formulario_material.html",
+                modo="crear",
+                curso=curso,
+                datos=datos,
+                tipos_material=tipos_material,
+            ), 400
+
+        material = construir_material(curso, datos)
+
+        db.session.add(material)
+
+        if guardar_cambios_material():
+            flash("Material agregado correctamente.", "success")
+
+            return redirect(
+                url_for(
+                    "profesor.detalle_curso",
+                    id_curso=curso.id_curso,
+                )
+            )
+
+        return render_template(
+            "profesor/formulario_material.html",
+            modo="crear",
+            curso=curso,
+            datos=datos,
+            tipos_material=tipos_material,
+        ), 400
+
+    return render_template(
+        "profesor/formulario_material.html",
+        modo="crear",
+        curso=curso,
+        datos=datos_iniciales_material(),
+        tipos_material=tipos_material,
+    )
+
+
+@profesor_bp.route(
+    "/cursos/<int:id_curso>/materiales/<int:id_material>/editar",
+    methods=["GET", "POST"],
+)
+@sesion_requerida
+@rol_requerido(ROL_PROFESOR)
+def editar_material(id_curso, id_material):
+    curso = obtener_curso_propio(id_curso)
+
+    material = Material.query.filter_by(
+        id_material=id_material,
+        id_curso=curso.id_curso,
+    ).first_or_404()
+
+    tipos_material = (
+        "PDF",
+        "Documento",
+        "Presentación",
+        "Video",
+        "Enlace",
+        "Otro",
+    )
+
+    if request.method == "POST":
+        datos = obtener_datos_formulario_material()
+        errores = validar_datos_material(datos)
+
+        if errores:
+            mostrar_errores(errores)
+
+            return render_template(
+                "profesor/formulario_material.html",
+                modo="editar",
+                curso=curso,
+                material=material,
+                datos=datos,
+                tipos_material=tipos_material,
+            ), 400
+
+        actualizar_material(material, datos)
+
+        if guardar_cambios_material():
+            flash("Material actualizado correctamente.", "success")
+
+            return redirect(
+                url_for(
+                    "profesor.detalle_curso",
+                    id_curso=curso.id_curso,
+                )
+            )
+
+        return render_template(
+            "profesor/formulario_material.html",
+            modo="editar",
+            curso=curso,
+            material=material,
+            datos=datos,
+            tipos_material=tipos_material,
+        ), 400
+
+    return render_template(
+        "profesor/formulario_material.html",
+        modo="editar",
+        curso=curso,
+        material=material,
+        datos=datos_desde_material(material),
+        tipos_material=tipos_material,
+    )
+
+
+def obtener_datos_formulario_material():
+    return {
+        "titulo": request.form.get("titulo", "").strip(),
+        "tipo_material": request.form.get("tipo_material", "").strip(),
+        "url_archivo": request.form.get("url_archivo", "").strip(),
+    }
+
+
+def datos_iniciales_material():
+    return {
+        "titulo": "",
+        "tipo_material": "",
+        "url_archivo": "",
+    }
+
+
+def datos_desde_material(material):
+    return {
+        "titulo": material.titulo,
+        "tipo_material": material.tipo_material or "",
+        "url_archivo": material.url_archivo or "",
+    }
+
+
+def validar_datos_material(datos):
+    errores = []
+
+    if not datos["titulo"]:
+        errores.append("El título del material es obligatorio.")
+
+    if not datos["tipo_material"]:
+        errores.append("El tipo de material es obligatorio.")
+
+    if not datos["url_archivo"]:
+        errores.append("La URL del archivo es obligatoria.")
+
+    return errores
+
+
+def construir_material(curso, datos):
+    return Material(
+        id_curso=curso.id_curso,
+        titulo=datos["titulo"],
+        tipo_material=datos["tipo_material"],
+        url_archivo=datos["url_archivo"],
+        visible=True,
+    )
+
+
+def actualizar_material(material, datos):
+    material.titulo = datos["titulo"]
+    material.tipo_material = datos["tipo_material"]
+    material.url_archivo = datos["url_archivo"]
+
+
+def guardar_cambios_material():
+    try:
+        db.session.commit()
+        return True
+
+    except IntegrityError:
+        db.session.rollback()
+
+        flash(
+            "No fue posible guardar el material.",
+            "error",
+        )
+
+        return False
 
 
 def construir_resumen_cursos(cursos):
