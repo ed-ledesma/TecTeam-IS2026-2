@@ -92,20 +92,48 @@
 
         </div>
 
-        <div class="actions form-actions">
+        <div
+            class="actions form-actions"
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            "
+        >
 
-            <button class="button" type="submit">
-                {{ 'Agregar material'
-                   if modo == 'crear'
-                   else 'Guardar cambios' }}
-            </button>
+            <div style="display: flex; gap: 0.75rem;">
 
-            <a
-                class="button light"
-                href="/profesor/cursos/{{ curso.id_curso }}"
+                <button class="button" type="submit">
+                    {{ 'Agregar material'
+                    if modo == 'crear'
+                    else 'Guardar cambios' }}
+                </button>
+
+                <a
+                    class="button light"
+                    href="/profesor/cursos/{{ curso.id_curso }}"
+                >
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+        {% if modo != 'crear' %}
+            <form
+                method="post"
+                action="/profesor/cursos/{{ curso.id_curso }}/materiales/{{ material.id_material }}/eliminar"
+                onsubmit="return confirm('¿Seguro que deseas eliminar este material?');"
             >
-                Cancelar
-            </a>
+                <button
+                    class="button danger"
+                    type="submit"
+                >
+                    Eliminar
+                </button>
+            </form>
+        {% endif %}
 
         </div>
 

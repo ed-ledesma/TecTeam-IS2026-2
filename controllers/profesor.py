@@ -108,6 +108,7 @@ def detalle_curso(id_curso):
 
     materiales = Material.query.filter_by(
         id_curso=curso.id_curso,
+        visible=True,
     ).all()
 
     return render_template(
@@ -320,6 +321,32 @@ def editar_material(id_curso, id_material):
         material=material,
         datos=datos_desde_material(material),
         tipos_material=tipos_material,
+    )
+
+
+@profesor_bp.post(
+    "/cursos/<int:id_curso>/materiales/<int:id_material>/eliminar"
+)
+@sesion_requerida
+@rol_requerido(ROL_PROFESOR)
+def eliminar_material(id_curso, id_material):
+    curso = obtener_curso_propio(id_curso)
+
+    material = Material.query.filter_by(
+        id_material=id_material,
+        id_curso=curso.id_curso,
+    ).first_or_404()
+
+    material.visible = False
+
+    if guardar_cambios_material():
+        flash("Material eliminado correctamente.", "success")
+
+    return redirect(
+        url_for(
+            "profesor.detalle_curso",
+            id_curso=curso.id_curso,
+        )
     )
 
 
