@@ -110,6 +110,7 @@ def ejecutar_poblacion():
     crear_material(curso_ingles.id_curso, "Video introductorio del curso", "Video", "https://example.com/materiales/video-introduccion")
     crear_inscripcion(alumno.id_usuario, curso_ingles.id_curso)
     crear_nivel_alumno(alumno.id_usuario, ingles.id_idioma, 1)
+    crear_nivel_alumno(alumno.id_usuario, aleman.id_idioma, 1)
     crear_nivel_alumno(alumno.id_usuario, frances.id_idioma, 1)
 
     db.session.commit()
