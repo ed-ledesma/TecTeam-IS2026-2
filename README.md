@@ -26,7 +26,6 @@ El proyecto está organizado para trabajar por sprints. En el estado actual, la 
 - [Reglas de negocio implementadas](#reglas-de-negocio-implementadas)
 - [Problemas comunes](#problemas-comunes)
 - [Estado actual del proyecto](#estado-actual-del-proyecto)
-- [Próximos sprints](#próximos-sprints)
 
 ---
 
@@ -664,6 +663,7 @@ sgci/
 │   ├── base.html
 │   ├── error.html
 │   ├── login.html
+|   ├── registro.html
 │   │
 │   ├── admin/
 │   │   ├── dashboard.html
@@ -673,13 +673,16 @@ sgci/
 │   │   └── alumnos.html
 │   │
 │   ├── profesor/
-│   │   ├── dashboard.html
 │   │   ├── cursos.html
+│   │   ├── dashboard.html
+│   │   ├── detalle_curso.html
 │   │   ├── formulario_curso.html
-│   │   └── detalle_curso.html
+│   │   └── formulario_material.html
 │   │
 │   └── alumno/
-│       └── dashboard.html
+│       └── cursos.html
+|		└── dashboard.html
+|		└── detalle_curso.html
 │
 ├── tests/
 │   ├── conftest.py
@@ -947,53 +950,11 @@ El proyecto se encuentra en el estado equivalente a:
 Sprint 1 — Autenticación y roles: completado
 Sprint 2 — Panel administrador y gestión de usuarios: completado
 Sprint 3 — Gestión de cursos por profesor: completado
+Sprint 4 — Vista de alumno e inscripción a cursos: completado
+Sprint 5 — Materiales didácticos: completado
 ```
 
-Actualmente el sistema ya permite probar un flujo administrativo y un flujo de profesor.
-
----
-
-## Próximos sprints
-
-### Sprint 4 — Vista de alumno e inscripción a cursos
-
-Objetivo:
-
-- listar cursos publicados para alumnos;
-- ver detalle de curso publicado;
-- inscribirse a un curso;
-- evitar doble inscripción;
-- consultar cursos inscritos.
-
-Rutas sugeridas:
-
-```text
-/alumno/cursos-disponibles
-/alumno/cursos/<id>
-/alumno/cursos/<id>/inscribirse
-/alumno/mis-cursos
-```
-
----
-
-### Sprint 5 — Materiales didácticos
-
-Objetivo:
-
-- permitir que el profesor agregue materiales a sus cursos;
-- permitir que el profesor edite o elimine materiales;
-- permitir que el alumno inscrito consulte materiales;
-- bloquear materiales para alumnos no inscritos.
-
-Rutas sugeridas:
-
-```text
-/profesor/cursos/<id>/materiales
-/profesor/cursos/<id>/materiales/crear
-/profesor/materiales/<id>/editar
-/profesor/materiales/<id>/eliminar
-/alumno/cursos/<id>/materiales
-```
+Actualmente el sistema se encuentra completo.
 
 ---
 
