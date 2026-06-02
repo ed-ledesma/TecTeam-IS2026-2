@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from flask import Blueprint, render_template, request, redirect, url_for
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import db
 from models.Usuario import Usuario
+from models.Alumno import Alumno
+from models.Idioma import Idioma
+from models.NivelAlumno import NivelAlumno
 from utils.auth import (
     cerrar_sesion_actual,
     encontrar_rol_de_usuario,
@@ -72,6 +75,64 @@ def login():
 @sesion_requerida
 def dashboard():
     return redirigir_a_dashboard_por_rol(obtener_rol_usuario_autenticado())
+
+
+@login_bp.route("/registro", methods=["GET", "POST"])
+def registro():
+    if request.method == "POST":
+        nombres = request.form.get("nombres", "").strip()
+        apellido_paterno = request.form.get("apellido_paterno", "").strip()
+        apellido_materno = request.form.get("apellido_materno", "").strip()
+        correo = request.form.get("correo", "").strip().lower()
+        password = request.form.get("password", "")
+        fecha_nacimiento = request.form.get("fecha_nacimiento")
+
+        if Usuario.query.filter_by(correo=correo).first():
+            return render_template(
+                "error.html",
+                titulo="Correo existente",
+                mensaje="Ya existe una cuenta con ese correo."
+            ), 400
+
+        usuario = Usuario(
+            nombres=nombres,
+            apellido_paterno=apellido_paterno,
+            apellido_materno=apellido_materno,
+            correo=correo,
+            fecha_nacimiento=datetime.strptime(
+                fecha_nacimiento,
+                "%Y-%m-%d"
+            ).date(),
+            activo=True,
+            password_hash=generate_password_hash(password)
+        )
+
+        db.session.add(usuario)
+        db.session.flush()
+
+        alumno = Alumno(
+            id_usuario=usuario.id_usuario,
+            matricula=f"ALU-{usuario.id_usuario:03d}"
+        )
+
+        db.session.add(alumno)
+
+        idiomas = Idioma.query.all()
+
+        for idioma in idiomas:
+            db.session.add(
+                NivelAlumno(
+                    id_usuario=usuario.id_usuario,
+                    id_idioma=idioma.id_idioma,
+                    nivel=1,
+                )
+            )
+
+        db.session.commit()
+
+        return redirect(url_for("login.login"))
+
+    return render_template("registro.html")
 
 
 @login_bp.route("/logout")
