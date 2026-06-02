@@ -2,7 +2,7 @@
 
 SGCI es una aplicación web desarrollada con **Python**, **Flask**, **SQLAlchemy** y **MySQL** para administrar cursos de idiomas. El sistema maneja usuarios con roles, cursos, profesores, alumnos, inscripciones y materiales didácticos.
 
-El proyecto está organizado para trabajar por sprints. En el estado actual, la aplicación permite autenticación, control de acceso por rol, gestión administrativa de usuarios y gestión de cursos por parte del profesor.
+El proyecto está organizado para trabajar por sprints. En el estado actual, la aplicación permite autenticación, control de acceso por rol, gestión administrativa de usuarios, gestión de cursos  y materiales por parte del profesor, inscripción de cursos y consulta de material por parte del alumno.
 
 ---
 
@@ -77,9 +77,11 @@ El profesor puede:
 El alumno actualmente puede:
 
 - iniciar sesión;
-- acceder a su dashboard inicial.
-
-Las funciones de inscripción, consulta de cursos disponibles y consulta de materiales están planeadas para los siguientes sprints.
+- crear cuenta;
+- acceder a su dashboard inicial;
+- consultar cursos disponibles;
+- inscribir cursos;
+- consulta de materiales.
 
 ---
 
