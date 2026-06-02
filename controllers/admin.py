@@ -20,6 +20,7 @@ from utils.auth import (
     encontrar_rol_de_usuario,
     rol_requerido,
     sesion_requerida,
+    obtener_id_usuario_autenticado,
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -157,6 +158,9 @@ def editar_usuario(id_usuario):
             ), 400
 
         actualizar_usuario(usuario, datos)
+        if id_usuario == obtener_id_usuario_autenticado():
+            flash("No puedes cambiar tu propio rol.", "error")
+            return redirect(url_for("admin.listar_usuarios"))
         actualizar_asignacion_rol(usuario, rol_actual, datos)
 
         if datos["rol"] == ROL_ALUMNO:
@@ -211,6 +215,9 @@ def activar_usuario(id_usuario):
 @sesion_requerida
 @rol_requerido(ROL_ADMINISTRADOR)
 def desactivar_usuario(id_usuario):
+    if id_usuario == obtener_id_usuario_autenticado():
+        flash("No puedes desactivar tu propia cuenta.", "error")
+        return redirect(url_for("admin.listar_usuarios"))
     usuario = db.get_or_404(Usuario, id_usuario)
     usuario.activo = False
     db.session.commit()
